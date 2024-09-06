@@ -3,11 +3,11 @@ services: [all] # name of service for run all, maintenance, api, opendata, jobs
 port: ":8082"
 debug: true
 database:
-  host: db_host
-  port: db_port
-  user: db_user
-  pass: db_password
-  name: db_name
+  host: localhost
+  port: 5432
+  user: poramin
+  pass: 1234
+  name: personal
   maxIdle: 50
   maxConn: 100
   automigrate: true

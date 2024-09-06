@@ -2,7 +2,7 @@ package configs
 
 import (
 	"fmt"
-	"strings"
+	// "strings"
 
 	"github.com/spf13/viper"
 )
@@ -19,18 +19,18 @@ var (
 )
 
 func init() {
-	config.SetConfigName("config.yaml")
-	config.AddConfigPath("./configs")
-	config.SetConfigType("yaml")
-	config.SetEnvPrefix("QuickStart")
-	config.AutomaticEnv()
-	// แปลง _ underscore ใน env เป็น . dot notation ใน viper
-	config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	err := config.ReadInConfig()
-	if err != nil {
-		panic(fmt.Errorf("fatal error config file: %s \n", err))
-	}
-	getRunMode()
+	// config.SetConfigName("config.yaml")
+	// config.AddConfigPath("./configs")
+	// config.SetConfigType("yaml")
+	// config.SetEnvPrefix("QuickStart")
+	// config.AutomaticEnv()
+	// // แปลง _ underscore ใน env เป็น . dot notation ใน viper
+	// config.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	// err := config.ReadInConfig()
+	// if err != nil {
+	// 	panic(fmt.Errorf("fatal error config file: %s \n", err))
+	// }
+	// getRunMode()
 }
 
 func getRunMode() {
