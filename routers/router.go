@@ -13,4 +13,5 @@ func SetupRoutes(app *fiber.App) {
     })
 
    SetupOpenDataApiRouter(app)
+   SetupPersonalApiRouter(app)
 }
