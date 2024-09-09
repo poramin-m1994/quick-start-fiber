@@ -46,7 +46,9 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	// ส่งข้อมูลผู้ใช้ที่สร้างสำเร็จกลับไป
-	return c.Status(fiber.StatusOK).JSON(user)
+	return ResponseJsonWithCOde(c, fiber.StatusOK, 20000, "Success", result)
+	// return c.Status(fiber.StatusOK).JSON(user)
+
 }
 
 // GetUsers ดึงข้อมูลผู้ใช้ทั้งหมดจากฐานข้อมูล
@@ -66,7 +68,4 @@ func hashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func checkPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
-}
+
