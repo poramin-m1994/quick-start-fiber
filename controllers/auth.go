@@ -3,6 +3,7 @@ package controllers
 import (
 	"quickstart/db"
 	"quickstart/models"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -84,6 +85,38 @@ func Login(c *fiber.Ctx) error {
 
 }
 
+// Logout ฟังก์ชันสำหรับการออกจากระบบ
+func Logout(c *fiber.Ctx) error {
+	var result = map[string]interface{}{}
+
+	// ดึงค่า token จาก Header
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40100, "Authorization header is missing", result)
+	}
+
+	// ตรวจสอบว่า header มีคำว่า "Bearer" หรือไม่
+	token := strings.Split(authHeader, "Bearer ")
+	if len(token) != 2 {
+		return ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40101, "Invalid authorization format", result)
+	}
+	tokenString := token[1]
+
+	// ค้นหา token ในฐานข้อมูล
+	var tokenModel models.Token
+	tokenData := db.DB.Where("token = ?", tokenString).First(&tokenModel)
+	if tokenData.Error != nil {
+		return ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40102, "Token not found", result)
+	}
+
+	// ลบ token ออกจากฐานข้อมูล
+	if err := db.DB.Delete(&tokenModel).Error; err != nil {
+		return ResponseJsonWithCOde(c, fiber.StatusInternalServerError, 40103, "Failed to delete token", result)
+	}
+
+	// ตอบกลับว่าออกจากระบบสำเร็จ
+	return ResponseJsonWithCOde(c, fiber.StatusOK, fiber.StatusOK, "Successfully logged out", result)
+}
 func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil

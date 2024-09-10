@@ -13,6 +13,7 @@ func SetupPersonalApiRouter(app *fiber.App) {
 	// auth api
 	personalAuthV1 := personalV1.Group("/auth")
 	personalAuthV1.Post("login", controllers.Login)
+	personalAuthV1.Post("/logout", controllers.Logout)
 
 
 	// user api
