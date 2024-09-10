@@ -3,6 +3,7 @@ package controllers
 import (
 	"quickstart/db"
 	"quickstart/models"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,6 +23,8 @@ func CreatePortfolio(c *fiber.Ctx) error {
 		return ResponseJsonWithCOde(c, fiber.StatusBadRequest, 40000, "Cannot parse JSON", result)
 	}
 	portfolio.UserID = user.UserID
+	portfolio.CreatedAt = time.Now()
+	portfolio.UpdatedAt = time.Now()
 
 	// สร้าง Portfolio ในฐานข้อมูล
 	if err := db.DB.Create(&portfolio).Error; err != nil {
