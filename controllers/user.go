@@ -11,10 +11,10 @@ import (
 // CreateUser สร้างผู้ใช้ใหม่โดยใช้ Transaction
 func CreateUser(c *fiber.Ctx) error {
 	var result = map[string]interface{}{}
-	_, shouldReturn, returnValue := GetAuthHeader(c, result)
-	if shouldReturn {
-		return returnValue
-	}
+	// _, shouldReturn, returnValue := GetAuthHeader(c, result)
+	// if shouldReturn {
+	// 	return returnValue
+	// }
 
 	user := new(models.User)
 
