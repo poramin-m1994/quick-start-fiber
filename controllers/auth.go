@@ -12,7 +12,7 @@ import (
 )
 
 // GenerateToken สร้าง Token ใหม่สำหรับผู้ใช้
-func GenerateToken(userID uint) (string, error) {
+func GenerateToken(userID uint) (string, models.Token, error) {
 	// สร้าง UUID เพื่อเป็น token
 	token := uuid.New().String()
 
@@ -25,10 +25,10 @@ func GenerateToken(userID uint) (string, error) {
 	}
 
 	if err := db.DB.Create(&newToken).Error; err != nil {
-		return "", err
+		return "", newToken, err
 	}
 
-	return token, nil
+	return token, newToken, nil
 }
 
 // Login ฟังก์ชันสำหรับเข้าสู่ระบบ
@@ -57,7 +57,7 @@ func Login(c *fiber.Ctx) error {
 	err := db.DB.Where("user_id = ?", foundUser.UserID).Order("created_at desc").First(&token).Error
 	// ถ้าไม่มี Token ให้สร้างใหม่
 	if err != nil {
-		userToken, err = GenerateToken(foundUser.UserID)
+		userToken, token, err = GenerateToken(foundUser.UserID)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to generate token"})
 		}
