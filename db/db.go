@@ -29,7 +29,7 @@ func Connect() {
 	}
 
 	// ทำการ AutoMigrate เพื่อสร้างตาราง users
-	err = DB.AutoMigrate(&models.User{}, &models.Token{})
+	err = DB.AutoMigrate(&models.User{}, &models.Token{}, &models.Stock{}, &models.Portfolio{}, &models.PurchaseHistory{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}

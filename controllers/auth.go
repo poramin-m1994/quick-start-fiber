@@ -126,7 +126,29 @@ func GetAuthHeader(c *fiber.Ctx, result map[string]interface{}) (string, bool, e
 	tokenString := token[1]
 	return tokenString, false, nil
 }
+
 func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func GetUserAuthHeader(c *fiber.Ctx, result map[string]interface{}) (userObj models.User, IsFalse bool, err error) {
+	var tokenModel models.Token
+
+	// ดึงค่า token จาก Header
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return userObj, true, ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40100, "Authorization header is missing", result)
+	}
+
+	// ตรวจสอบว่า header มีคำว่า "Bearer" หรือไม่
+	token := strings.Split(authHeader, "Bearer ")
+	if len(token) != 2 {
+		return userObj, true, ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40101, "Invalid authorization format", result)
+	}
+	tokenString := token[1]
+	db.DB.Where("token = ?", tokenString).First(&tokenModel)
+	db.DB.Where("user_id = ?", tokenModel.UserID).First(&userObj)
+
+	return userObj, false, nil
 }
