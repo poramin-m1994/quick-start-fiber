@@ -2,8 +2,11 @@ package configs
 
 import (
 	"fmt"
+	"os"
+
 	// "strings"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -31,6 +34,14 @@ func init() {
 	// 	panic(fmt.Errorf("fatal error config file: %s \n", err))
 	// }
 	// getRunMode()
+}
+
+func GetConfig(key string) string {
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+	return os.Getenv(key)
 }
 
 func getRunMode() {

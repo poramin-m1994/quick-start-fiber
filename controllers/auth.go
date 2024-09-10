@@ -89,18 +89,10 @@ func Login(c *fiber.Ctx) error {
 func Logout(c *fiber.Ctx) error {
 	var result = map[string]interface{}{}
 
-	// ดึงค่า token จาก Header
-	authHeader := c.Get("Authorization")
-	if authHeader == "" {
-		return ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40100, "Authorization header is missing", result)
+	tokenString, shouldReturn, returnValue := GetAuthHeader(c, result)
+	if shouldReturn {
+		return returnValue
 	}
-
-	// ตรวจสอบว่า header มีคำว่า "Bearer" หรือไม่
-	token := strings.Split(authHeader, "Bearer ")
-	if len(token) != 2 {
-		return ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40101, "Invalid authorization format", result)
-	}
-	tokenString := token[1]
 
 	// ค้นหา token ในฐานข้อมูล
 	var tokenModel models.Token
@@ -116,6 +108,23 @@ func Logout(c *fiber.Ctx) error {
 
 	// ตอบกลับว่าออกจากระบบสำเร็จ
 	return ResponseJsonWithCOde(c, fiber.StatusOK, fiber.StatusOK, "Successfully logged out", result)
+}
+
+func GetAuthHeader(c *fiber.Ctx, result map[string]interface{}) (string, bool, error) {
+
+	// ดึงค่า token จาก Header
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return "", true, ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40100, "Authorization header is missing", result)
+	}
+
+	// ตรวจสอบว่า header มีคำว่า "Bearer" หรือไม่
+	token := strings.Split(authHeader, "Bearer ")
+	if len(token) != 2 {
+		return "", true, ResponseJsonWithCOde(c, fiber.StatusUnauthorized, 40101, "Invalid authorization format", result)
+	}
+	tokenString := token[1]
+	return tokenString, false, nil
 }
 func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))

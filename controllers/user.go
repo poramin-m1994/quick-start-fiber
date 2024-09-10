@@ -11,6 +11,10 @@ import (
 // CreateUser สร้างผู้ใช้ใหม่โดยใช้ Transaction
 func CreateUser(c *fiber.Ctx) error {
 	var result = map[string]interface{}{}
+	_, shouldReturn, returnValue := GetAuthHeader(c, result)
+	if shouldReturn {
+		return returnValue
+	}
 
 	user := new(models.User)
 
@@ -56,6 +60,11 @@ func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
 	var result = map[string]interface{}{}
 
+	_, shouldReturn, returnValue := GetAuthHeader(c, result)
+	if shouldReturn {
+		return returnValue
+	}
+
 	db.DB.Find(&users)
 	result["users"] = users
 	return ResponseJsonWithCOde(c, fiber.StatusOK, 20000, "Success", result)
@@ -67,5 +76,3 @@ func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
 }
-
-
